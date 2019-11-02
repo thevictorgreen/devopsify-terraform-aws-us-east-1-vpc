@@ -9,44 +9,44 @@ variable "region" {
 }
 
 data "aws_route53_zone" "dns_private_zone" {
-  name         = "AAAAA"
+  name         = "BBBBB"
   private_zone = true
 }
 
 data "aws_route53_zone" "dns_reverse_zone" {
-  name         = "10.10.in-addr.arpa."
+  name         = "CCCCC"
   private_zone = true
 }
 
 data "aws_route53_zone" "skyfall_public_zone" {
-  name         = "BBBBB"
+  name         = "DDDDD"
   private_zone = false
 }
 
 variable "subnets" {
   type = "map"
   default = {
-    "management001useast1-public-us-east-1a-sn"  = "CCCCC"
-    "management001useast1-public-us-east-1b-sn"  = "DDDDD"
-    "management001useast1-public-us-east-1c-sn"  = "EEEEE"
-    "management001useast1-public-us-east-1d-sn"  = "FFFFF"
-    "management001useast1-public-us-east-1e-sn"  = "GGGGG"
-    "management001useast1-public-us-east-1f-sn"  = "HHHHH"
-    "management001useast1-private-us-east-1a-sn" = "IIIII"
-    "management001useast1-private-us-east-1b-sn" = "JJJJJ"
-    "management001useast1-private-us-east-1c-sn" = "KKKKK"
-    "management001useast1-private-us-east-1d-sn" = "LLLLL"
-    "management001useast1-private-us-east-1e-sn" = "MMMMM"
-    "management001useast1-private-us-east-1f-sn" = "NNNNN"
+    "AAAAA001useast1-public-us-east-1a-sn"  = "EEEEE"
+    "AAAAA001useast1-public-us-east-1b-sn"  = "FFFFF"
+    "AAAAA001useast1-public-us-east-1c-sn"  = "GGGGG"
+    "AAAAA001useast1-public-us-east-1d-sn"  = "HHHHH"
+    "AAAAA001useast1-public-us-east-1e-sn"  = "IIIII"
+    "AAAAA001useast1-public-us-east-1f-sn"  = "JJJJJ"
+    "AAAAA001useast1-private-us-east-1a-sn" = "KKKKK"
+    "AAAAA001useast1-private-us-east-1b-sn" = "LLLLL"
+    "AAAAA001useast1-private-us-east-1c-sn" = "MMMMM"
+    "AAAAA001useast1-private-us-east-1d-sn" = "NNNNN"
+    "AAAAA001useast1-private-us-east-1e-sn" = "OOOOO"
+    "AAAAA001useast1-private-us-east-1f-sn" = "PPPPP"
   }
 }
 
 variable "secgroups" {
   type = "map"
   default = {
-    "management001useast1-bastion-security-group" = "OOOOO"
-    "management001useast1-public-security-group"  = "PPPPP"
-    "management001useast1-private-security-group" = "QQQQQ"
+    "AAAAA001useast1-bastion-security-group" = "QQQQQ"
+    "AAAAA001useast1-public-security-group"  = "RRRRR"
+    "AAAAA001useast1-private-security-group" = "SSSSS"
   }
 }
 
@@ -74,16 +74,16 @@ variable "instance_type" {
 variable "keypairs" {
   type = "map"
   default = {
-    "kp_1" = "RRRRR"
+    "kp_1" = "TTTTT"
   }
 }
 
 variable "public_key" {
-  default = "z/RRRRR.pub"
+  default = "z/TTTTT.pub"
 }
 
 variable "private_key" {
-  default = "z/RRRRR.pem"
+  default = "z/TTTTT.pem"
 }
 
 variable "ansible_user" {

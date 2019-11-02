@@ -4,10 +4,10 @@ resource "aws_instance" "sample-machine" {
   instance_type = "${var.instance_type["micro"]}"
 
   key_name      = "${var.keypairs["kp_1"]}"
-  subnet_id     = "${var.subnets["management001useast1-public-us-east-1a-sn"]}"
+  subnet_id     = "${var.subnets["AAAAA001useast1-public-us-east-1a-sn"]}"
 
   vpc_security_group_ids = [
-    "${var.secgroups["management001useast1-bastion-security-group"]}"
+    "${var.secgroups["AAAAA001useast1-bastion-security-group"]}"
   ]
 
   connection {
@@ -27,7 +27,7 @@ resource "aws_instance" "sample-machine" {
   tags = {
     Name = "${var.sample_machine_name}${count.index}"
     region = "us-east-1"
-    env = "management"
+    env = "AAAAA"
     AnsibleRole = "sample"
     ClusterRole = "none"
   }
