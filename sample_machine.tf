@@ -63,8 +63,8 @@ resource "aws_eip" "sample-machine-eip" {
 
 resource "aws_route53_record" "sample-machine-public-record" {
   count   = "${var.sample_machine_count}"
-  zone_id = "${data.aws_route53_zone.skyfall_public_zone.zone_id}"
-  name    = "${var.sample_machine_name}${count.index}.${data.aws_route53_zone.skyfall_public_zone.name}"
+  zone_id = "${data.aws_route53_zone.dns_public_zone.zone_id}"
+  name    = "${var.sample_machine_name}${count.index}.${data.aws_route53_zone.dns_public_zone.name}"
   type    = "A"
   ttl     = "300"
   records = ["${aws_eip.sample-machine-eip[count.index].public_ip}"]
