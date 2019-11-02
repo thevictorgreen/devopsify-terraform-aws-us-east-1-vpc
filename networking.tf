@@ -18,7 +18,7 @@ data "aws_route53_zone" "dns_reverse_zone" {
   private_zone = true
 }
 
-data "aws_route53_zone" "skyfall_public_zone" {
+data "aws_route53_zone" "dns_public_zone" {
   name         = "DDDDD"
   private_zone = false
 }
