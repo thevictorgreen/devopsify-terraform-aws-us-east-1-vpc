@@ -22,7 +22,7 @@ resource "aws_instance" "vault-machine" {
     inline = [
       "while [ ! -f /var/lib/cloud/instance/boot-finished ]; do echo waiting-for-boot-finished; sleep 5; done;",
       "while [ ! -z \"$(lsof /var/lib/dpkg/lock-frontend)\" ]; do echo cloud-init-configuring-system; sleep 5; done;",
-      "sudo hostnamectl set-hostname ${each.value}.${var.domain}"
+      "sudo hostnamectl set-hostname ${each.value}.AAAAA.${var.domain}"
     ]
   }
 
@@ -66,7 +66,7 @@ resource "aws_eip" "vault-machine-eip" {
 resource "aws_route53_record" "vault-machine-public-record" {
   for_each = "${toset(var.vault_machine_names)}"
   zone_id  = "${data.aws_route53_zone.dns_public_zone.zone_id}"
-  name     = "${each.value}.${data.aws_route53_zone.dns_public_zone.name}"
+  name     = "${each.value}.AAAAA.${data.aws_route53_zone.dns_public_zone.name}"
   type     = "A"
   ttl      = "300"
   records  = ["${aws_eip.vault-machine-eip[each.value].public_ip}"]
