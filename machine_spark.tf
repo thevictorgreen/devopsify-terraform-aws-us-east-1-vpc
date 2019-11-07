@@ -18,11 +18,18 @@ resource "aws_instance" "spark-machine" {
     host        = "${aws_instance.spark-machine[each.value].public_ip}"
   }
 
+  provisioner "file" {
+    source = "scripts/AAAAA_prompt.sh"
+    destination = "/tmp/custom_prompt.sh"
+  }
+
   provisioner "remote-exec" {
     inline = [
       "while [ ! -f /var/lib/cloud/instance/boot-finished ]; do echo waiting-for-boot-finished; sleep 5; done;",
-      "while [ ! -z \"$(lsof /var/lib/dpkg/lock-frontend)\" ]; do echo cloud-init-configuring-system; sleep 5; done;",
-      "sudo hostnamectl set-hostname ${each.value}.AAAAA.${var.domain}"
+      "while [ ! -z \"$(sudo lsof /var/lib/dpkg/lock-frontend)\" ]; do echo cloud-init-configuring-system; sleep 5; done;",
+      "sudo hostnamectl set-hostname ${each.value}.AAAAA.${var.domain}",
+      "sudo mv /tmp/custom_prompt.sh /etc/profile.d/custom_prompt.sh",
+      "sudo chmod +x /etc/profile.d/custom_prompt.sh"
     ]
   }
 
