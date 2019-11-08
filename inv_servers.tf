@@ -78,6 +78,26 @@ variable "consul_machine_ansible_group" {
 }
 
 
+# dnsforwarder MACHINE
+variable "dnsforwarder_machine_names" {
+  description = "Host names for dnsforwarder machines"
+  type = list(string)
+  default = ["dns000"]
+}
+
+variable "dnsforwarder_machine_subnets" {
+  description = "Subnet where each host is to be provisioned"
+  type = "map"
+  default = {
+    "dnsforwarder000" = "AAAAA001useast1-public-us-east-1a-sn"
+  }
+}
+
+variable "dnsforwarder_machine_ansible_group" {
+  default = "dnsforwarder"
+}
+
+
 # elasticsearchmaster MACHINE
 variable "elasticsearchmaster_machine_names" {
   description = "Host names for elasticsearchmaster machines"
