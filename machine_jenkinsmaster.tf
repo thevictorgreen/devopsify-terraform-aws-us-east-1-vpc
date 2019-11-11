@@ -15,7 +15,7 @@ resource "aws_instance" "jenkinsmaster-machine" {
   connection {
     private_key = "${file(var.private_key)}"
     user        = "${var.ansible_user["ubuntu_18_04"]}"
-    host        = "${aws_instance.jenkinsmaster-machine[each.value].public_ip}"
+    host        = "${self.private_ip}"
   }
 
   provisioner "file" {

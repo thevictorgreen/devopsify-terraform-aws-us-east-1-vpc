@@ -15,7 +15,7 @@ resource "aws_instance" "openvpn-machine" {
   connection {
     private_key = "${file(var.private_key)}"
     user        = "${var.ansible_user["ubuntu_18_04"]}"
-    host        = "${aws_instance.openvpn-machine[each.value].public_ip}"
+    host        = "${self.public_ip}"
   }
 
   provisioner "file" {
