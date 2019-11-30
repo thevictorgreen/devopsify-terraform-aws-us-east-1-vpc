@@ -1,12 +1,12 @@
 /*
 # REMOVE MULTILINE COMMENT BLOCK TO PROVISION THESE RESOURCES
-resource "aws_instance" "aptly-machine" {
-  for_each      = "${toset(var.aptly_machine_names)}"
+resource "aws_instance" "chefworkstation-machine" {
+  for_each      = "${toset(var.chefworkstation_machine_names)}"
   ami           = "${var.amis["ubuntu_18_04"]}"
   instance_type = "${var.instance_type["micro"]}"
 
   key_name      = "${var.keypairs["kp_1"]}"
-  subnet_id     = "${var.subnets[ var.aptly_machine_subnets[ each.value ] ]}"
+  subnet_id     = "${var.subnets[ var.chefworkstation_machine_subnets[ each.value ] ]}"
 
   vpc_security_group_ids = [
     "${var.secgroups["AAAAA001useast1-bastion-security-group"]}"
@@ -42,45 +42,45 @@ resource "aws_instance" "aptly-machine" {
     Name = "${each.value}"
     region = "us-east-1"
     env = "AAAAA"
-    AnsibleRole = "aptly"
+    AnsibleRole = "chefworkstation"
     ClusterRole = "none"
   }
 }
 
 
-resource "aws_route53_record" "aptly-machine-private-record" {
-  for_each = "${toset(var.aptly_machine_names)}"
+resource "aws_route53_record" "chefworkstation-machine-private-record" {
+  for_each = "${toset(var.chefworkstation_machine_names)}"
   zone_id  = "${data.aws_route53_zone.dns_private_zone.zone_id}"
   name     = "${each.value}.${data.aws_route53_zone.dns_private_zone.name}"
   type     = "A"
   ttl      = "300"
-  records  = ["${aws_instance.aptly-machine[each.value].private_ip}"]
+  records  = ["${aws_instance.chefworkstation-machine[each.value].private_ip}"]
 }
 
 
-resource "aws_route53_record" "aptly-machine-reverse-record" {
-  for_each = "${toset(var.aptly_machine_names)}"
+resource "aws_route53_record" "chefworkstation-machine-reverse-record" {
+  for_each = "${toset(var.chefworkstation_machine_names)}"
   zone_id = "${data.aws_route53_zone.dns_reverse_zone.zone_id}"
-  name    = "${element(split(".", aws_instance.aptly-machine[each.value].private_ip),3)}.${element(split(".", aws_instance.aptly-machine[each.value].private_ip),2)}.${data.aws_route53_zone.dns_reverse_zone.name}"
+  name    = "${element(split(".", aws_instance.chefworkstation-machine[each.value].private_ip),3)}.${element(split(".", aws_instance.chefworkstation-machine[each.value].private_ip),2)}.${data.aws_route53_zone.dns_reverse_zone.name}"
   records = ["${each.value}.${data.aws_route53_zone.dns_private_zone.name}"]
   type    = "PTR"
   ttl     = "300"
 }
 
 
-resource "aws_eip" "aptly-machine-eip" {
-  for_each = "${toset(var.aptly_machine_names)}"
-  instance = "${aws_instance.aptly-machine[each.value].id}"
+resource "aws_eip" "chefworkstation-machine-eip" {
+  for_each = "${toset(var.chefworkstation_machine_names)}"
+  instance = "${aws_instance.chefworkstation-machine[each.value].id}"
   vpc      = true
 }
 
 
-resource "aws_route53_record" "aptly-machine-public-record" {
-  for_each = "${toset(var.aptly_machine_names)}"
+resource "aws_route53_record" "chefworkstation-machine-public-record" {
+  for_each = "${toset(var.chefworkstation_machine_names)}"
   zone_id  = "${data.aws_route53_zone.dns_public_zone.zone_id}"
   name     = "${each.value}.AAAAA.${data.aws_route53_zone.dns_public_zone.name}"
   type     = "A"
   ttl      = "300"
-  records  = ["${aws_eip.aptly-machine-eip[each.value].public_ip}"]
+  records  = ["${aws_eip.chefworkstation-machine-eip[each.value].public_ip}"]
 }
 */

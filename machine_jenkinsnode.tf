@@ -12,6 +12,11 @@ resource "aws_instance" "jenkinsnode-machine" {
     "${var.secgroups["AAAAA001useast1-bastion-security-group"]}"
   ]
 
+  root_block_device {
+    volume_type = "standard"
+    volume_size = 8
+  }
+
   connection {
     private_key = "${file(var.private_key)}"
     user        = "${var.ansible_user["ubuntu_18_04"]}"
