@@ -1,5 +1,23 @@
-/*
-# REMOVE MULTILINE COMMENT BLOCK TO PROVISION THESE RESOURCES
+# elasticsearchmaster variables
+variable "elasticsearchmaster_machine_names" {
+  description = "Host names for elasticsearchmaster machines"
+  type = list(string)
+  default = ["elasticsearchmaster000"]
+}
+
+variable "elasticsearchmaster_machine_subnets" {
+  description = "Subnet where each host is to be provisioned"
+  type = "map"
+  default = {
+    "elasticsearchmaster000" = "AAAAA001useast1-private-us-east-1a-sn"
+  }
+}
+
+variable "elasticsearchmaster_machine_ansible_group" {
+  default = "elasticsearchmaster"
+}
+
+# elasticsearchmaster MACHINE
 resource "aws_instance" "elasticsearchmaster-machine" {
   for_each      = "${toset(var.elasticsearchmaster_machine_names)}"
   ami           = "${var.amis["ubuntu_18_04"]}"
@@ -9,7 +27,7 @@ resource "aws_instance" "elasticsearchmaster-machine" {
   subnet_id     = "${var.subnets[ var.elasticsearchmaster_machine_subnets[ each.value ] ]}"
 
   vpc_security_group_ids = [
-    "${var.secgroups["AAAAA001useast1-bastion-security-group"]}"
+    "${var.secgroups["AAAAA001useast1-private-security-group"]}"
   ]
 
   root_block_device {
@@ -67,7 +85,7 @@ resource "aws_route53_record" "elasticsearchmaster-machine-reverse-record" {
   ttl     = "300"
 }
 
-
+/*
 resource "aws_eip" "elasticsearchmaster-machine-eip" {
   for_each = "${toset(var.elasticsearchmaster_machine_names)}"
   instance = "${aws_instance.elasticsearchmaster-machine[each.value].id}"

@@ -1,5 +1,23 @@
-/*
-# REMOVE MULTILINE COMMENT BLOCK TO PROVISION THESE RESOURCES
+# elasticsearchnode variables
+variable "elasticsearchnode_machine_names" {
+  description = "Host names for elasticsearchnode machines"
+  type = list(string)
+  default = ["elasticsearchnode000"]
+}
+
+variable "elasticsearchnode_machine_subnets" {
+  description = "Subnet where each host is to be provisioned"
+  type = "map"
+  default = {
+    "elasticsearchnode000" = "AAAAA001useast1-private-us-east-1a-sn"
+  }
+}
+
+variable "elasticsearchnode_machine_ansible_group" {
+  default = "elasticsearchnode"
+}
+
+# elasticsearchnode MACHINE
 resource "aws_instance" "elasticsearchnode-machine" {
   for_each      = "${toset(var.elasticsearchnode_machine_names)}"
   ami           = "${var.amis["ubuntu_18_04"]}"
@@ -9,7 +27,7 @@ resource "aws_instance" "elasticsearchnode-machine" {
   subnet_id     = "${var.subnets[ var.elasticsearchnode_machine_subnets[ each.value ] ]}"
 
   vpc_security_group_ids = [
-    "${var.secgroups["AAAAA001useast1-bastion-security-group"]}"
+    "${var.secgroups["AAAAA001useast1-private-security-group"]}"
   ]
 
   root_block_device {
@@ -67,7 +85,7 @@ resource "aws_route53_record" "elasticsearchnode-machine-reverse-record" {
   ttl     = "300"
 }
 
-
+/*
 resource "aws_eip" "elasticsearchnode-machine-eip" {
   for_each = "${toset(var.elasticsearchnode_machine_names)}"
   instance = "${aws_instance.elasticsearchnode-machine[each.value].id}"

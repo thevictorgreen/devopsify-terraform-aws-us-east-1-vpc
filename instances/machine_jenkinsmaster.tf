@@ -1,5 +1,23 @@
-/*
-# REMOVE MULTILINE COMMENT BLOCK TO PROVISION THESE RESOURCES
+# jenkinsmaster variables
+variable "jenkinsmaster_machine_names" {
+  description = "Host names for jenkinsmaster machines"
+  type = list(string)
+  default = ["jenkinsmaster000"]
+}
+
+variable "jenkinsmaster_machine_subnets" {
+  description = "Subnet where each host is to be provisioned"
+  type = "map"
+  default = {
+    "jenkinsmaster000" = "AAAAA001useast1-private-us-east-1a-sn"
+  }
+}
+
+variable "jenkinsmaster_machine_ansible_group" {
+  default = "jenkinsmaster"
+}
+
+# jenkinsmaster MACHINE
 resource "aws_instance" "jenkinsmaster-machine" {
   for_each      = "${toset(var.jenkinsmaster_machine_names)}"
   ami           = "${var.amis["ubuntu_18_04"]}"
@@ -9,7 +27,7 @@ resource "aws_instance" "jenkinsmaster-machine" {
   subnet_id     = "${var.subnets[ var.jenkinsmaster_machine_subnets[ each.value ] ]}"
 
   vpc_security_group_ids = [
-    "${var.secgroups["AAAAA001useast1-bastion-security-group"]}"
+    "${var.secgroups["AAAAA001useast1-private-security-group"]}"
   ]
 
   root_block_device {
@@ -67,7 +85,7 @@ resource "aws_route53_record" "jenkinsmaster-machine-reverse-record" {
   ttl     = "300"
 }
 
-
+/*
 resource "aws_eip" "jenkinsmaster-machine-eip" {
   for_each = "${toset(var.jenkinsmaster_machine_names)}"
   instance = "${aws_instance.jenkinsmaster-machine[each.value].id}"
