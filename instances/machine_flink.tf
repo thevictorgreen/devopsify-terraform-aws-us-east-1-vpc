@@ -1,15 +1,33 @@
-/*
-# REMOVE MULTILINE COMMENT BLOCK TO PROVISION THESE RESOURCES
-resource "aws_instance" "vault-machine" {
-  for_each      = "${toset(var.vault_machine_names)}"
+# flink variables
+variable "flink_machine_names" {
+  description = "Host names for flink machines"
+  type = list(string)
+  default = ["flink000"]
+}
+
+variable "flink_machine_subnets" {
+  description = "Subnet where each host is to be provisioned"
+  type = "map"
+  default = {
+    "flink000" = "AAAAA001useast1-private-us-east-1a-sn"
+  }
+}
+
+variable "flink_machine_ansible_group" {
+  default = "flink"
+}
+
+# flink MACHINE
+resource "aws_instance" "flink-machine" {
+  for_each      = "${toset(var.flink_machine_names)}"
   ami           = "${var.amis["ubuntu_18_04"]}"
   instance_type = "${var.instance_type["micro"]}"
 
   key_name      = "${var.keypairs["kp_1"]}"
-  subnet_id     = "${var.subnets[ var.vault_machine_subnets[ each.value ] ]}"
+  subnet_id     = "${var.subnets[ var.flink_machine_subnets[ each.value ] ]}"
 
   vpc_security_group_ids = [
-    "${var.secgroups["AAAAA001useast1-bastion-security-group"]}"
+    "${var.secgroups["AAAAA001useast1-private-security-group"]}"
   ]
 
   root_block_device {
@@ -42,45 +60,45 @@ resource "aws_instance" "vault-machine" {
     Name = "${each.value}"
     region = "us-east-1"
     env = "AAAAA"
-    AnsibleRole = "vault"
+    AnsibleRole = "flink"
     ClusterRole = "none"
   }
 }
 
 
-resource "aws_route53_record" "vault-machine-private-record" {
-  for_each = "${toset(var.vault_machine_names)}"
+resource "aws_route53_record" "flink-machine-private-record" {
+  for_each = "${toset(var.flink_machine_names)}"
   zone_id  = "${data.aws_route53_zone.dns_private_zone.zone_id}"
   name     = "${each.value}.${data.aws_route53_zone.dns_private_zone.name}"
   type     = "A"
   ttl      = "300"
-  records  = ["${aws_instance.vault-machine[each.value].private_ip}"]
+  records  = ["${aws_instance.flink-machine[each.value].private_ip}"]
 }
 
 
-resource "aws_route53_record" "vault-machine-reverse-record" {
-  for_each = "${toset(var.vault_machine_names)}"
+resource "aws_route53_record" "flink-machine-reverse-record" {
+  for_each = "${toset(var.flink_machine_names)}"
   zone_id = "${data.aws_route53_zone.dns_reverse_zone.zone_id}"
-  name    = "${element(split(".", aws_instance.vault-machine[each.value].private_ip),3)}.${element(split(".", aws_instance.vault-machine[each.value].private_ip),2)}.${data.aws_route53_zone.dns_reverse_zone.name}"
+  name    = "${element(split(".", aws_instance.flink-machine[each.value].private_ip),3)}.${element(split(".", aws_instance.flink-machine[each.value].private_ip),2)}.${data.aws_route53_zone.dns_reverse_zone.name}"
   records = ["${each.value}.${data.aws_route53_zone.dns_private_zone.name}"]
   type    = "PTR"
   ttl     = "300"
 }
 
-
-resource "aws_eip" "vault-machine-eip" {
-  for_each = "${toset(var.vault_machine_names)}"
-  instance = "${aws_instance.vault-machine[each.value].id}"
+/*
+resource "aws_eip" "flink-machine-eip" {
+  for_each = "${toset(var.flink_machine_names)}"
+  instance = "${aws_instance.flink-machine[each.value].id}"
   vpc      = true
 }
 
 
-resource "aws_route53_record" "vault-machine-public-record" {
-  for_each = "${toset(var.vault_machine_names)}"
+resource "aws_route53_record" "flink-machine-public-record" {
+  for_each = "${toset(var.flink_machine_names)}"
   zone_id  = "${data.aws_route53_zone.dns_public_zone.zone_id}"
   name     = "${each.value}.AAAAA.${data.aws_route53_zone.dns_public_zone.name}"
   type     = "A"
   ttl      = "300"
-  records  = ["${aws_eip.vault-machine-eip[each.value].public_ip}"]
+  records  = ["${aws_eip.flink-machine-eip[each.value].public_ip}"]
 }
 */
