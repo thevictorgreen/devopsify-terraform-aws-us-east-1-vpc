@@ -58,6 +58,46 @@ variable "arangodbnode_machine_ansible_group" {
 }
 
 
+# chefserver MACHINE
+variable "chefserver_machine_names" {
+  description = "Host names for sample machines"
+  type = list(string)
+  default = ["chefsrv000"]
+}
+
+variable "chefserver_machine_subnets" {
+  description = "Subnet where each host is to be provisioned"
+  type = "map"
+  default = {
+    "chefsrv000" = "AAAAA001useast1-private-us-east-1a-sn"
+  }
+}
+
+variable "chefserver_machine_ansible_group" {
+  default = "chefserver"
+}
+
+
+# chefworkstation MACHINE
+variable "chefworkstation_machine_names" {
+  description = "Host names for sample machines"
+  type = list(string)
+  default = ["chefwks000"]
+}
+
+variable "chefworkstation_machine_subnets" {
+  description = "Subnet where each host is to be provisioned"
+  type = "map"
+  default = {
+    "chefwks000" = "AAAAA001useast1-private-us-east-1a-sn"
+  }
+}
+
+variable "chefworkstation_machine_ansible_group" {
+  default = "chefworkstation"
+}
+
+
 # consul MACHINE
 variable "consul_machine_names" {
   description = "Host names for sample machines"
