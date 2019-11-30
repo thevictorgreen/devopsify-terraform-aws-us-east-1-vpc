@@ -1,15 +1,33 @@
-/*
-# REMOVE MULTILINE COMMENT BLOCK TO PROVISION THESE RESOURCES
-resource "aws_instance" "nifi-machine" {
-  for_each      = "${toset(var.nifi_machine_names)}"
+# nginx variables
+variable "nginx_machine_names" {
+  description = "Host names for sample machines"
+  type = list(string)
+  default = ["nginx000"]
+}
+
+variable "nginx_machine_subnets" {
+  description = "Subnet where each host is to be provisioned"
+  type = "map"
+  default = {
+    "nginx000" = "AAAAA001useast1-private-us-east-1a-sn"
+  }
+}
+
+variable "nginx_machine_ansible_group" {
+  default = "nginx"
+}
+
+# nginx MACHINE
+resource "aws_instance" "nginx-machine" {
+  for_each      = "${toset(var.nginx_machine_names)}"
   ami           = "${var.amis["ubuntu_18_04"]}"
   instance_type = "${var.instance_type["micro"]}"
 
   key_name      = "${var.keypairs["kp_1"]}"
-  subnet_id     = "${var.subnets[ var.nifi_machine_subnets[ each.value ] ]}"
+  subnet_id     = "${var.subnets[ var.nginx_machine_subnets[ each.value ] ]}"
 
   vpc_security_group_ids = [
-    "${var.secgroups["AAAAA001useast1-bastion-security-group"]}"
+    "${var.secgroups["AAAAA001useast1-private-security-group"]}"
   ]
 
   root_block_device {
@@ -42,45 +60,45 @@ resource "aws_instance" "nifi-machine" {
     Name = "${each.value}"
     region = "us-east-1"
     env = "AAAAA"
-    AnsibleRole = "nifi"
+    AnsibleRole = "nginx"
     ClusterRole = "none"
   }
 }
 
 
-resource "aws_route53_record" "nifi-machine-private-record" {
-  for_each = "${toset(var.nifi_machine_names)}"
+resource "aws_route53_record" "nginx-machine-private-record" {
+  for_each = "${toset(var.nginx_machine_names)}"
   zone_id  = "${data.aws_route53_zone.dns_private_zone.zone_id}"
   name     = "${each.value}.${data.aws_route53_zone.dns_private_zone.name}"
   type     = "A"
   ttl      = "300"
-  records  = ["${aws_instance.nifi-machine[each.value].private_ip}"]
+  records  = ["${aws_instance.nginx-machine[each.value].private_ip}"]
 }
 
 
-resource "aws_route53_record" "nifi-machine-reverse-record" {
-  for_each = "${toset(var.nifi_machine_names)}"
+resource "aws_route53_record" "nginx-machine-reverse-record" {
+  for_each = "${toset(var.nginx_machine_names)}"
   zone_id = "${data.aws_route53_zone.dns_reverse_zone.zone_id}"
-  name    = "${element(split(".", aws_instance.nifi-machine[each.value].private_ip),3)}.${element(split(".", aws_instance.nifi-machine[each.value].private_ip),2)}.${data.aws_route53_zone.dns_reverse_zone.name}"
+  name    = "${element(split(".", aws_instance.nginx-machine[each.value].private_ip),3)}.${element(split(".", aws_instance.nginx-machine[each.value].private_ip),2)}.${data.aws_route53_zone.dns_reverse_zone.name}"
   records = ["${each.value}.${data.aws_route53_zone.dns_private_zone.name}"]
   type    = "PTR"
   ttl     = "300"
 }
 
-
-resource "aws_eip" "nifi-machine-eip" {
-  for_each = "${toset(var.nifi_machine_names)}"
-  instance = "${aws_instance.nifi-machine[each.value].id}"
+/*
+resource "aws_eip" "nginx-machine-eip" {
+  for_each = "${toset(var.nginx_machine_names)}"
+  instance = "${aws_instance.nginx-machine[each.value].id}"
   vpc      = true
 }
 
 
-resource "aws_route53_record" "nifi-machine-public-record" {
-  for_each = "${toset(var.nifi_machine_names)}"
+resource "aws_route53_record" "nginx-machine-public-record" {
+  for_each = "${toset(var.nginx_machine_names)}"
   zone_id  = "${data.aws_route53_zone.dns_public_zone.zone_id}"
   name     = "${each.value}.AAAAA.${data.aws_route53_zone.dns_public_zone.name}"
   type     = "A"
   ttl      = "300"
-  records  = ["${aws_eip.nifi-machine-eip[each.value].public_ip}"]
+  records  = ["${aws_eip.nginx-machine-eip[each.value].public_ip}"]
 }
 */
